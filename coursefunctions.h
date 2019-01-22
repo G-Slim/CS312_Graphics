@@ -27,6 +27,7 @@ void GameOfLife(Buffer2D<PIXEL> & target)
         static int gridH = 64; 
         static int grid[64][64];
         static int gridTmp[64][64];
+        static int count = 0;
 
         // Setup small grid, temporary grid from previous iteration
         for(int y = 0; y < gridH; y++)
@@ -80,10 +81,38 @@ void GameOfLife(Buffer2D<PIXEL> & target)
         // Advance the simulation after pressing 'g'
         if(!isSetup)
         {
-                // Your Code goes here
+                for(int i = 0; i < gridW; i++)
+                {
+                        for(int j = 0; j < gridH; j++)
+                        {
+                                if(grid[i][j] == 1) // if pixel is alive
+                                {
+                                        // counts alive neighbor pixels
+                                        if(i != gridW && j != gridH) {if(grid[i+1][j+1]) { count++; }}
+                                        if(i != gridW && j != 0) {if(grid[i+1][j-1]) { count++; }}
+                                        if(i != 0 && j != gridH) {if(grid[i-1][j+1]) { count++; }}
+                                        if(i != 0 && j != 0) {if(grid[i-1][j-1]) { count++; }}
+                                        if(j != gridH) {if(grid[i][j+1]) { count++; }}
+                                        if(i != gridW) {if(grid[i+1][j]) { count++; }}
+                                        if(i != 0) {if(grid[i-1][j]) { count++; }}
+                                        if(j != 0) {if(grid[i][j-1]) { count++; }}
+
+                                        if(count <= 1) { grid[i][j] = 0; } // dies
+                                        if(count >= 4) { grid[i][j] = 0; } // dies
+                                }
+                                else if(grid[i][j] == 0 && count == 3) // if dead and has 3 neightbors
+                                {
+                                        grid[i][j] = 1; // revive
+                                }
+
+                                count = 0;
+                        }
+                }
+
+                // counted pixels decides rules
 
                 // Wait a half-second between iterations
-                SDL_Delay(500);
+                SDL_Delay(50);
         }
 
 
